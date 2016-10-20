@@ -12,10 +12,10 @@ var lock = new Auth0Lock(
 
 lock.on('authenticated', function (authResult) {
   console.log('authResult', authResult);
-  localStorage.setItem('idToken', authResult.idToken)
-  showProfile()
-  loadGrowls()
+  localStorage.setItem('id_token', authResult.idToken)
+  showGrowlDirectory()
 })
+
 
 $(document).ready(function() {
   $('#btn-login').on('click', function (e) {
@@ -30,18 +30,18 @@ $(document).ready(function() {
 
 
   if (isLoggedIn()) {
-    loadGrowls();
+    showProfile();
+    showGrowlDirectory();
   }
 });
+
 function showProfile(){
-  console.log('hello');
   $('#btn-login').hide()
   $('#user-info').show()
-  lock.getProfile(localStorage.getItem('idToken'), function(error, profile){
+  lock.getProfile(localStorage.getItem('id_token'), function(error, profile){
     if(error){
       logout()
     } else {
-      console.log('Hello Profile', profile);
       $('#avatar').text(profile.name)
       $('#profilepicture').attr('src', profile.picture)
   //    $('#avatar').
@@ -52,7 +52,7 @@ function showProfile(){
 
 
 function isLoggedIn() {
-  if (localStorage.getItem('idToken')) {
+  if (localStorage.getItem('id_token')) {
     return true;
   } else {
     return false;
@@ -60,22 +60,27 @@ function isLoggedIn() {
 }
 
 function logout() {
-  localStorage.removeItem('idToken')
+  localStorage.removeItem('id_token')
   window.location.href = '/';
 }
 
-function loadGrowls() {
-  $('#btn-login').hide()
-  $('#user-info').show()
 
+function showGrowlDirectory() {
+  $('#profile').show()
   $.ajax({
-    url: 'http://localhost:3000/Growls',
-    headers: {
-      'Authorization': 'Bearer ' + localStorage.getItem('idToken')
+    url:'https://afternoon-river-32575.herokuapp.com/growls',
+    headers:{
+      "Authorization":"Bearer " + localStorage.getItem('id_token')
     }
   }).done(function (data) {
-    data.forEach(function (datum) {
-      loadStudent(datum)
+    console.log(data);
+      data.forEach(loadGrowl)
     })
-  })
+}
+
+function loadGrowl(growl) {
+  var li= $("<li />")
+  console.log(growl);
+  li.text("content", growl.content)
+  $("ul#growls").append(li)
 }
