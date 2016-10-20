@@ -1,6 +1,6 @@
 var lock = new Auth0Lock(
-  'ZFsRafVrvuCZHwxtFqmAhRuyBBXYNtOV',
-  'thegoblinking.auth0.com',
+  'GOmlS3wgzIqSOoWkG4DevSE1jGer8krh',
+  'bryonymc.auth0.com',
   {
     auth: {
       params: {
@@ -28,8 +28,6 @@ $(document).ready(function() {
     logout()
   })
 
-  $(document).on('click', '#students li', toggleStudent)
-  $(document).on('click', 'a.delete-link', deleteStudent)
 
   if (isLoggedIn()) {
     loadGrowls();
@@ -50,20 +48,7 @@ function showProfile(){
     }
   })
 }
-function deleteGrowl(e) {
-  e.preventDefault()
-  e.stopPropagation()
-  var link = $(this)
-  $.ajax({
-    url: link.attr('href'),
-    method: 'DELETE',
-    headers: {
-      'Authorization': 'Bearer ' + localStorage.getItem('idToken')
-    }
-  }).done(function () {
-    link.parent('li').remove()
-  })
-}
+
 
 
 function isLoggedIn() {
@@ -93,21 +78,4 @@ function loadGrowls() {
       loadStudent(datum)
     })
   })
-}
-
-function loadStudent(student) {
-  var li = $('<li />')
-  console.log(student);
-  li.text(student.firstName + ' '+student.lastName+" ")
-  li.data('firstName', student.firstName)
-  if (student.completed) li.addClass('done');
-
-  var deleteLink = $('<a />');
-  deleteLink.text('Delete')
-  deleteLink.attr('href', 'http://localhost:3000/Grows/' + student._id)
-  deleteLink.addClass('delete-link')
-
-  li.append(deleteLink)
-
-  $('#students').append(li)
 }
